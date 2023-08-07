@@ -4,14 +4,72 @@
     box-sizing: border-box;
 }
 
+body {
+    height: 100svh;
+    display: grid;
+    grid-template: 1fr max-content / 1fr 3fr;
+}
+
+nav, main {
+    display: flex;
+    flex-direction: column;
+}
+
+.task-container, .project-container {
+    flex: 1 0 1px;
+    overflow-y: auto;
+}
+
+nav {
+    padding: 1em;
+    border-right: 1px solid gray;
+}
+
+.project {
+    padding-bottom: 1em;
+}
+
+.project:not(:first-of-type) {
+    padding-top: 1em;
+    border-top: 1px solid gray;
+}
+
+button {
+    margin-top: 1em;
+    align-self: flex-start;
+}
+
+main {
+    padding: 1em;
+}
+
+.task {
+    padding-bottom: 1em;
+}
+
+.task:not(:first-of-type) {
+    padding-top: 1em;
+    border-top: 1px solid gray;
+}
+
+.task-line {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.hidden {
+    display: none; 
+}
+
 a {
     text-decoration: none;
     color: white;
 }
 
 footer {
+    grid-column: 1 / -1;
     background-color: darkslategray;
-    color: white;
     padding: 0.25em 0;
 }
 
