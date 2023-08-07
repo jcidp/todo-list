@@ -1,5 +1,6 @@
 import createElement from "../helpers/createElement";
 import renderLinkIcon from "../helpers/renderSVG";
+import format from "date-fns/format";
 
 export default loadMain;
 
@@ -19,7 +20,7 @@ function loadMain(tasks) {
             createElement("p", task.getTitle(), ["task-name"])
         );
         one_liners.appendChild(
-            createElement("p", task.getDueDate(), ["task-due-date"])
+            createElement("p", format(task.getDueDate(), "MMM d"), ["task-due-date"])
         );
         //TODO: append the pencil svg to the container
         //TODO: append the trash can svg to the container
