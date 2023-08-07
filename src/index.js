@@ -1,9 +1,15 @@
 import "./style.css";
 import {Task, Project} from  "./modules/factories";
+import loadNav from "./components/nav";
+import loadFooter from "./components/footer";
+import loadMain from "./components/tasks";
 
 const appController = (() => {
     let project_list = [];
     let current_project;
+
+    const getProjectList = () => project_list;
+    const getCurrentProject = () => current_project;
 
     const addProject = (project) => {
         project_list.push(project);
@@ -46,12 +52,14 @@ const appController = (() => {
         current_project.setName("Cool Project Test");
         console.log(current_project.getName());
         console.log(project_list.map(task => task.getName()));
-        deleteProject(current_project);
-        console.log(project_list.map(task => task.getName()));
+        //deleteProject(current_project);
+        //console.log(project_list.map(task => task.getName()));
         console.log(current_project.getName());
     };
 
     return {
+        getProjectList,
+        getCurrentProject,
         addProject,
         changeCurrentProject,
         deleteProject,
@@ -64,3 +72,7 @@ const appController = (() => {
 
 appController.initialSetup();
 appController.test();
+
+loadNav(appController.getProjectList());
+loadMain(appController.getCurrentProject().getTaskList());
+loadFooter();
