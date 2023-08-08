@@ -34,6 +34,10 @@ nav {
     border-top: 1px solid gray;
 }
 
+.current-project {
+    font-weight: bold;
+}
+
 button {
     margin-top: 1em;
     align-self: flex-start;
@@ -55,7 +59,21 @@ main {
 .task-line {
     display: flex;
     align-items: center;
-    gap: 1em;
+    gap: 1rem;
+}
+
+.priority {
+    width: 1rem;
+    text-align: center;
+}
+
+.p1 {
+    background-color: red;
+    color: white;
+}
+
+.p2 {
+    background-color: rgb(236, 236, 4);
 }
 
 .hidden {

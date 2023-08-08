@@ -14,7 +14,7 @@ function loadMain(tasks) {
             ["type", "checkbox"]
         ]));
         one_liners.appendChild(
-            createElement("p", task.getPriority(), ["priority"])
+            createElement("p", task.getPriority(), ["priority", `p${task.getPriority()}`])
         );
         one_liners.appendChild(
             createElement("p", task.getTitle(), ["task-name"])

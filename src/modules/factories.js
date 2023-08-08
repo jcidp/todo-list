@@ -57,7 +57,7 @@ const Project = (initial_name, initial_task_list) => {
         getTaskList,
         addTask,
         deleteTask,
-    }
+    };
 }
 
 export {Task, Project};

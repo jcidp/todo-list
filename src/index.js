@@ -3,6 +3,7 @@ import {Task, Project} from  "./modules/factories";
 import loadNav from "./components/nav";
 import loadFooter from "./components/footer";
 import loadMain from "./components/tasks";
+import createElement from "./helpers/createElement";
 
 const appController = (() => {
     let project_list = [];
@@ -10,6 +11,12 @@ const appController = (() => {
 
     const getProjectList = () => project_list;
     const getCurrentProject = () => current_project;
+
+    const getProjectFromName = (name) => {
+        return project_list.filter(project => {
+            return project.getName() === name
+        })[0];
+    };
 
     const addProject = (project) => {
         project_list.push(project);
@@ -50,6 +57,7 @@ const appController = (() => {
     return {
         getProjectList,
         getCurrentProject,
+        getProjectFromName,
         addProject,
         changeCurrentProject,
         deleteProject,
@@ -57,15 +65,89 @@ const appController = (() => {
         //deleteTaskFromCurrentProject,
         initialSetup,
         test,
+    };
+})();
+
+const DOMController = (() => {
+    const renderPage = () => {
+        loadNav(appController.getProjectList(), appController.getCurrentProject().getName());
+        loadMain(appController.getCurrentProject().getTaskList());
+        loadFooter();
+        addListeners();
+    };
+
+    const addListeners = () => {
+        const newListBtn = document.querySelector(".new-list.new");
+        newListBtn.addEventListener("click", renderNewListPopup);
+
+        const projects = document.querySelectorAll(".project-title");
+        projects.forEach(project => project.addEventListener("click", selectProject));
+    };
+
+    function selectProject(e){
+        const current_project = appController.getProjectFromName(e.target.textContent);
+        appController.changeCurrentProject(current_project);
+        deletePage();
+        renderPage();
     }
+
+    function renderNewListPopup() {
+        const popup = createElement("div", "", ["list", "popup"]);
+        popup.appendChild(createElement("input", "", ["new-list", "name"],[
+            ["type", "text"],
+            ["autofocus", true],
+            ["minlength", "1"],
+            //TODO: Add validation to avoid repeated names
+        ]));
+        const cancel = createElement("button", "Cancel", ["new-list", "cancel"]);
+        cancel.addEventListener("click", cancelNewList);
+        popup.appendChild(cancel);
+    
+    
+        const add = createElement("button", "Add", ["new-list", "add"]);
+        add.addEventListener("click", addNewList);
+        popup.appendChild(add);
+    
+        document.querySelector("nav").insertBefore(
+            popup,
+            document.querySelector(".new-list.new")
+        );
+    }
+    
+    function cancelNewList() {
+        document.querySelector("nav").removeChild(
+            document.querySelector(".list.popup")
+        );
+    }
+    
+    function addNewList() {
+        const name = document.querySelector(".new-list.name").value;
+        console.log(name);
+    
+        appController.addProject(Project(name, []));
+    
+        deletePage();
+        renderPage();
+    }
+
+    function deletePage() {
+        const body = document.querySelector("body");
+        body.removeChild(document.querySelector("nav"));
+        body.removeChild(document.querySelector("main"));
+        body.removeChild(document.querySelector("footer"));
+    }
+
+    return {
+        renderPage
+    };
 })();
 
 appController.initialSetup();
 appController.test();
 
-loadNav(appController.getProjectList());
-loadMain(appController.getCurrentProject().getTaskList());
-loadFooter();
+DOMController.renderPage();
+
+export default appController;
 
 /*
     const test = () => {
