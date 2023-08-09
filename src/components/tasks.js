@@ -31,7 +31,7 @@ function loadMain(tasks) {
         container.appendChild(task_container);
     });
     main.appendChild(container);
-    main.appendChild(createElement("button", "+ New Task"));
+    main.appendChild(createElement("button", "+ New Task", ["new-task", "new"]));
 
     // const button_container = createElement("div", "", ["button-container"]);
     // button_container.appendChild(createElement("button", "+ New Task"));

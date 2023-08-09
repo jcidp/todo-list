@@ -80,8 +80,14 @@ const DOMController = (() => {
         const newListBtn = document.querySelector(".new-list.new");
         newListBtn.addEventListener("click", renderNewListPopup);
 
+        const newTaskBtn = document.querySelector(".new-task.new");
+        newTaskBtn.addEventListener("click", renderNewTaskPopup);
+
         const projects = document.querySelectorAll(".project-title");
         projects.forEach(project => project.addEventListener("click", selectProject));
+
+        const tasks = document.querySelectorAll(".task");
+        tasks.forEach(task => task.addEventListener("click", selectTask));
     };
 
     function selectProject(e){
@@ -91,11 +97,16 @@ const DOMController = (() => {
         renderPage();
     }
 
+    function selectTask(e) {
+        console.log(e.target);
+    }
+
     function renderNewListPopup() {
-        const popup = createElement("div", "", ["list", "popup"]);
+        const popup = createElement("div", "", ["new-list", "popup"]);
         popup.appendChild(createElement("input", "", ["new-list", "name"],[
             ["type", "text"],
             ["autofocus", true],
+            ["placeholder", "List name"],
             ["minlength", "1"],
             //TODO: Add validation to avoid repeated names
         ]));
@@ -116,15 +127,78 @@ const DOMController = (() => {
     
     function cancelNewList() {
         document.querySelector("nav").removeChild(
-            document.querySelector(".list.popup")
+            document.querySelector(".new-list.popup")
         );
     }
     
     function addNewList() {
         const name = document.querySelector(".new-list.name").value;
-        console.log(name);
     
         appController.addProject(Project(name, []));
+    
+        deletePage();
+        renderPage();
+    }
+
+    function renderNewTaskPopup() {
+        const popup = createElement("div", "", ["new-task", "popup"]);
+        popup.appendChild(createElement("input", "", ["new-task", "name"],[
+            ["type", "text"],
+            ["autofocus", true],
+            ["placeholder", "Task name"],
+            ["minlength", "1"],
+            //TODO: Add validation to avoid repeated names
+        ]));
+        popup.appendChild(createElement("input", "", ["new-task", "date"],[
+            ["type", "date"],
+        ]));
+
+        const priorityInput = createElement("select", "", ["new-task", "priority"],[
+            ["name", "priority"],
+        ]);
+        priorityInput.appendChild(createElement("option", "1", "", [
+            ["value", "1"],
+            ["selected", true]
+        ]));
+        priorityInput.appendChild(createElement("option", "2", "", [
+            ["value", "2"]
+        ]));
+        priorityInput.appendChild(createElement("option", "3", "", [
+            ["value", "3"]
+        ]));
+        popup.appendChild(priorityInput);
+
+        popup.appendChild(createElement("textarea", "", ["new-task", "description"],[
+            ["placeholder", "Description"],
+        ]));
+
+        const cancel = createElement("button", "Cancel", ["new-task", "cancel"]);
+        cancel.addEventListener("click", cancelNewTask);
+        popup.appendChild(cancel);
+
+        const add = createElement("button", "Add", ["new-task", "add"]);
+        add.addEventListener("click", addNewTask);
+        popup.appendChild(add);
+    
+        document.querySelector("main").insertBefore(
+            popup,
+            document.querySelector(".new-task.new")
+        );
+    }
+
+    function cancelNewTask() {
+        document.querySelector("main").removeChild(
+            document.querySelector(".new-task.popup")
+        );
+    }
+
+    function addNewTask() {
+        const name = document.querySelector(".new-task.name").value;
+        const date = document.querySelector(".new-task.date").value;
+        const priority = document.querySelector(".new-task.priority").value;
+        const description = document.querySelector(".new-task.description").value;
+
+        appController.getCurrentProject().addTask(Task(name, description, new Date(date), priority));
     
         deletePage();
         renderPage();
