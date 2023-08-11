@@ -8,25 +8,25 @@ function loadMain(tasks) {
     const main = document.createElement("main");
     const container = createElement("div", "", ["task-container"]);
     tasks.forEach(task => {
-        const task_container = createElement("div", "", ["task"]);
-        const one_liners = createElement("div", "", ["task-line"]);
+        const task_container = createElement("div", "", ["task", "expand"]);
+        const one_liners = createElement("div", "", ["task-line", "expand"]);
         one_liners.appendChild(createElement("input", "", "",[
             ["type", "checkbox"]
         ]));
         one_liners.appendChild(
-            createElement("p", task.getPriority(), ["priority", `p${task.getPriority()}`])
+            createElement("p", task.getPriority(), ["priority", `p${task.getPriority()}`, "expand"])
         );
         one_liners.appendChild(
-            createElement("p", task.getTitle(), ["task-name"])
+            createElement("p", task.getTitle(), ["task-name", "expand"])
         );
         one_liners.appendChild(
-            createElement("p", format(task.getDueDate(), "MMM d"), ["task-due-date"])
+            createElement("p", format(task.getDueDate(), "MMM d"), ["task-due-date", "expand"])
         );
         //TODO: append the pencil svg to the container
         //TODO: append the trash can svg to the container
         task_container.appendChild(one_liners);
         task_container.appendChild(
-            createElement("p", task.getDescription(), ["task-description", "hidden"])
+            createElement("p", task.getDescription(), ["task-description", "expand", "hidden"])
         );
         container.appendChild(task_container);
     });

@@ -98,7 +98,12 @@ const DOMController = (() => {
     }
 
     function selectTask(e) {
-        console.log(e.target);
+        const target = e.target;
+        if (!target.classList.contains("expand")) return;
+        const parent = target.classList.contains("task") ? target :
+            target.closest(".task");
+        const description = [...parent.childNodes].filter(node => node.classList.contains("task-description"))[0];
+        description.classList.toggle("hidden");
     }
 
     function renderNewListPopup() {
