@@ -13,6 +13,8 @@ function renderLinkIcon(name, viewBox, path_d) {
     iconPath.setAttribute('d', path_d);
     
     iconSvg.appendChild(iconPath);
-    
+
+    if (name === "pencil" || name === "delete") iconSvg.classList.add(name);
+
     return iconSvg;
     }

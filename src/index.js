@@ -25,8 +25,8 @@ const appController = (() => {
 
     const changeCurrentProject = (project) => current_project = project;
 
-    const deleteProject = (project) => {
-        project_list = project_list.filter(current_project => current_project != project);
+    const deleteProject = (project_name) => {
+        project_list = project_list.filter(project => project.getName() != project_name);
         current_project = project_list.length ? project_list[0] : null;
     };
 
@@ -50,8 +50,10 @@ const appController = (() => {
         current_project.addTask(Task("Task4", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Suspendisse sed nisi lacus sed viverra tellus. Sagittis aliquam malesuada bibendum arcu vitae elementum curabitur vitae nunc.", new Date(), 3));
         current_project.addTask(Task("Task5", "Desc5", new Date(), 3));
         current_project.addTask(Task("Task6", "Desc6", new Date(), 3));
-        //current_project.addTask(Task("Task7", "Desc7", new Date(), 3));
         current_project.setName("Cool Project Test");
+        //deleteProject("Today");
+        //addProject(Project("Project Test", []));
+        //current_project.addTask(Task("Task7", "Desc7", new Date(), 3));
     };
 
     return {
@@ -88,6 +90,9 @@ const DOMController = (() => {
 
         const tasks = document.querySelectorAll(".task");
         tasks.forEach(task => task.addEventListener("click", selectTask));
+
+        const deletes = document.querySelectorAll("svg.delete");
+        deletes.forEach(svg => svg.addEventListener("click", deleteTask));
     };
 
     function selectProject(e){
@@ -205,6 +210,18 @@ const DOMController = (() => {
 
         appController.getCurrentProject().addTask(Task(name, description, new Date(date), priority));
     
+        deletePage();
+        renderPage();
+    }
+
+    function deleteTask(e) {
+        const line = e.target.closest(".task-line");
+        const title = [...line.childNodes].filter(child =>
+            child.classList.contains("task-name"))[0].textContent;
+        console.log(title);
+
+        appController.getCurrentProject().deleteTask(title);
+
         deletePage();
         renderPage();
     }

@@ -47,8 +47,10 @@ const Project = (initial_name, initial_task_list) => {
     
     const getTaskList = () => task_list;
     const addTask = (task) => task_list.push(task);
-    const deleteTask = (task) => 
-        task_list = task_list.filter(current_task => current_task != task);
+    const deleteTask = (task_title) => 
+        task_list = task_list.filter(current_task => 
+            current_task.getTitle() != task_title
+        );
 
 
     return {
