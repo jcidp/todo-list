@@ -4,6 +4,7 @@ import loadNav from "./components/nav";
 import loadFooter from "./components/footer";
 import loadMain from "./components/tasks";
 import createElement from "./helpers/createElement";
+import format from "date-fns/format";
 
 const appController = (() => {
     let project_list = [];
@@ -80,10 +81,10 @@ const DOMController = (() => {
 
     const addListeners = () => {
         const newListBtn = document.querySelector(".new-list.new");
-        newListBtn.addEventListener("click", createProject);
+        newListBtn.addEventListener("click", showCreateList);
 
         const newTaskBtn = document.querySelector(".new-task.new");
-        newTaskBtn.addEventListener("click", renderNewTaskPopup);
+        newTaskBtn.addEventListener("click", showCreateTask);
 
         const projects = document.querySelectorAll(".project-title");
         projects.forEach(project => project.addEventListener("click", selectProject));
@@ -98,13 +99,11 @@ const DOMController = (() => {
         deletes.forEach(svg => svg.addEventListener("click", deleteTask));
 
         const projectEdits = document.querySelectorAll(".project-edit.pencil");
-        projectEdits.forEach(editor => editor.addEventListener("click", editProject));
-    };
+        projectEdits.forEach(editor => editor.addEventListener("click", showEditList));
 
-    function toggleTaskDone(e) {
-        const title = e.target.parentElement.nextSibling.textContent;
-        appController.getCurrentProject().getTaskFromTitle(title).toggleDone();
-    }
+        const taskEdits = document.querySelectorAll(".task-edit.pencil");
+        taskEdits.forEach(editor => editor.addEventListener("click", showEditTask));
+    };
 
     function selectProject(e){
         const current_project = appController.getProjectFromName(e.target.textContent);
@@ -113,40 +112,31 @@ const DOMController = (() => {
         renderPage();
     }
 
-    function createProject() {
+    function showCreateList() {
         renderNewListPopup();
         document.querySelector(".new-list.add").addEventListener("click", addNewList);
         document.querySelector(".new-list.cancel").addEventListener("click", cancelNewList);
     }
 
-    function editProject(e) {
-        const name = e.target.closest(".project").firstChild.textContent;
-        console.log(name);
+    function showEditList(e) {
+        const current_name = e.target.closest(".project").firstChild.textContent;
         renderNewListPopup();
-        document.querySelector(".new-list.add").addEventListener("click", editProject);
-        document.querySelector(".new-list.cancel").addEventListener("click", cancelNewList);
+        document.querySelector(".new-list.name").value = current_name;
+        const addBtn = document.querySelector(".new-list.add");
+        addBtn.textContent = "Save";
+        addBtn.addEventListener("click", editList.bind(current_name));
     }
 
-    function editProject(e) {
+    function editList(e) {
         e.preventDefault();
         const formData = document.forms["new-list"];
-        const name = formData["name"].value;
-        if (!name) return showError("Please include a name");
-        if (appController.getProjectList().map(project => project.getName()).includes(name)) return showError("That list already exists");
-    
-        appController.addProject(Project(name, []));
+        const new_name = formData["name"].value;
+        if (!isListFormValid(new_name, this)) return;
+
+        appController.getProjectFromName(this).setName(new_name);
     
         deletePage();
         renderPage();
-    }
-
-    function selectTask(e) {
-        const target = e.target;
-        if (!target.classList.contains("expand")) return;
-        const parent = target.classList.contains("task") ? target :
-            target.closest(".task");
-        const description = [...parent.childNodes].filter(node => node.classList.contains("task-description"))[0];
-        description.classList.toggle("hidden");
     }
 
     function renderNewListPopup() {
@@ -161,13 +151,13 @@ const DOMController = (() => {
             ["placeholder", "List name *"],
             ["minlength", "1"],
             ["autocomplete", "off"],
-            //TODO: Add validation to avoid repeated names
         ]));
 
         const add = createElement("button", "Add", ["new-list", "add"]);
         form.appendChild(add);
         
         const cancel = createElement("button", "Cancel", ["new-list", "cancel"]);
+        cancel.addEventListener("click", cancelNewList);
         form.appendChild(cancel);
 
         popup.appendChild(form);
@@ -191,18 +181,64 @@ const DOMController = (() => {
         e.preventDefault();
         const formData = document.forms["new-list"];
         const name = formData["name"].value;
-        if (!name) return showError("Please include a name");
-        if (appController.getProjectList().map(project => project.getName()).includes(name)) return showError("That list already exists");
-    
+        if (!isListFormValid(name)) return;
         appController.addProject(Project(name, []));
     
         deletePage();
         renderPage();
     }
 
+    function isListFormValid(new_name, current_name) {
+        if (!new_name) return showError("Please include a name");
+        const project_name_list = appController.getProjectList().map(project => {
+            const project_name = project.getName();
+            if (project_name === current_name) return;
+            return project_name;
+        });
+        console.log(project_name_list);
+        if (project_name_list.includes(new_name)) return showError("That list already exists");
+
+        return true;
+    }
+
     function showError(error) {
         const errorEle = document.querySelector(".error");
         errorEle.textContent = error;
+    }
+
+    function selectTask(e) {
+        const target = e.target;
+        if (!target.classList.contains("expand")) return;
+        const parent = target.classList.contains("task") ? target :
+            target.closest(".task");
+        const description = [...parent.childNodes].filter(node => node.classList.contains("task-description"))[0];
+        description.classList.toggle("hidden");
+    }
+
+    function toggleTaskDone(e) {
+        const title = e.target.parentElement.nextSibling.textContent;
+        appController.getCurrentProject().getTaskFromTitle(title).toggleDone();
+    }
+
+    function showCreateTask() {
+        renderNewTaskPopup();
+        document.querySelector(".new-task.add").addEventListener("click", addNewTask);
+    }
+
+    function showEditTask(e) {
+        const current_name = e.target.closest(".task-line").firstChild.nextSibling.textContent;
+        renderNewTaskPopup();
+        const task = appController.getCurrentProject().getTaskFromTitle(current_name);
+        document.querySelector(".new-task.name").value = current_name;
+        document.querySelector(".new-task.date").value = format(task.getDueDate(), "y-MM-d");
+        document.querySelector(".new-task.priority").value = task.getPriority();
+        document.querySelector(".new-task.description").value =
+            task.getDescription() === "No description" ? "" : task.getDescription();
+        
+        const editBtn = document.querySelector(".new-task.add")
+        editBtn.textContent = "Save";
+        editBtn.addEventListener("click", editTask.bind(current_name));
+
     }
 
     function renderNewTaskPopup() {
@@ -217,7 +253,6 @@ const DOMController = (() => {
             ["placeholder", "Task name *"],
             ["minlength", "1"],
             ["autocomplete", "off"],
-            //TODO: Add validation to avoid repeated names
         ]));
         const date = createElement("label", "Due Date: *", "", [["for", "date"]]);
         date.appendChild(createElement("input", "", ["new-task", "date"],[
@@ -250,7 +285,6 @@ const DOMController = (() => {
         ]));
         
         const add = createElement("button", "Add", ["new-task", "add"]);
-        add.addEventListener("click", addNewTask);
         form.appendChild(add);
 
         const cancel = createElement("button", "Cancel", ["new-task", "cancel"]);
@@ -276,20 +310,45 @@ const DOMController = (() => {
 
     function addNewTask(e) {
         e.preventDefault();
-        const formData = document.forms["new-task"];
-        const name = formData["name"].value;
-        if (!name) return showError("Please include a task name");
-        if (appController.getCurrentProject().getTaskList().map(task => task.getTitle()).includes(name)) return showError("That task already exists");
-        const date = formData["date"].value;
-        if (!date) return showError("Please include a due date");
-        const priority = formData["priority"].value;
-        if (!priority) return showError("Please choose a priority");
-        const description = formData["description"].value;
+        const results = isTaskFormValid(document.forms["new-task"], this);
+        if (!results) return;
 
-        appController.getCurrentProject().addTask(Task(name, description, new Date(date), priority));
+        appController.getCurrentProject().addTask(Task(results.name, results.description, new Date(results.date), results.priority));
         
         deletePage();
         renderPage();
+    }
+
+    function editTask(e) {
+        e.preventDefault();
+        const results = isTaskFormValid(document.forms["new-task"], this);
+        if (!results) return;
+
+        const task = appController.getCurrentProject().getTaskFromTitle(this);
+        task.setTitle(results.name);
+        task.setDueDate(new Date(results.date));
+        task.setPriority(results.priority);
+        task.setDescription(results.description);
+        
+        deletePage();
+        renderPage();
+    }
+
+    function isTaskFormValid(task_form, current_name) {
+        const name = task_form["name"].value;
+        if (!name) return showError("Please include a task name");
+        const tasks_list = appController.getCurrentProject().getTaskList().map(task => {
+            const title = task.getTitle();
+            if (title === current_name) return;
+            return title;
+        });
+        if (tasks_list.includes(name)) return showError("That task already exists");
+        const date = task_form["date"].value;
+        if (!date) return showError("Please include a due date");
+        const priority = task_form["priority"].value;
+        if (!priority) return showError("Please choose a priority");
+        const description = task_form["description"].value;
+        return {name, date, priority, description};
     }
 
     function deleteTask(e) {

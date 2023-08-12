@@ -10,7 +10,7 @@ const Task = (new_title, new_description, new_due_date, new_priority) => {
     const setTitle = (new_title) => title = new_title;
 
     const getDescription = () => description;
-    const setDescription = (new_description) => description = new_description;
+    const setDescription = (new_description) => description = new_description || "No description";
 
     const getDueDate = () => due_date;
     const setDueDate = (new_due_date) => due_date = new_due_date;
