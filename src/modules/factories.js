@@ -1,6 +1,6 @@
 const Task = (new_title, new_description, new_due_date, new_priority) => {
     let title = new_title;
-    let description = new_description;
+    let description = new_description || "No description";
     let due_date = new_due_date;
     let priority = new_priority;
     let done = false;
@@ -52,6 +52,8 @@ const Project = (initial_name, initial_task_list) => {
             current_task.getTitle() != task_title
         );
 
+    const getTaskFromTitle = (title) =>
+        task_list.filter(task => task.getTitle() === title)[0];
 
     return {
         getName,
@@ -59,6 +61,7 @@ const Project = (initial_name, initial_task_list) => {
         getTaskList,
         addTask,
         deleteTask,
+        getTaskFromTitle,
     };
 }
 

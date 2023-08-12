@@ -80,7 +80,7 @@ const DOMController = (() => {
 
     const addListeners = () => {
         const newListBtn = document.querySelector(".new-list.new");
-        newListBtn.addEventListener("click", renderNewListPopup);
+        newListBtn.addEventListener("click", createProject);
 
         const newTaskBtn = document.querySelector(".new-task.new");
         newTaskBtn.addEventListener("click", renderNewTaskPopup);
@@ -91,13 +91,51 @@ const DOMController = (() => {
         const tasks = document.querySelectorAll(".task");
         tasks.forEach(task => task.addEventListener("click", selectTask));
 
+        const checks = document.querySelectorAll("input[type=checkbox]");
+        checks.forEach(check => check.addEventListener("click", toggleTaskDone));
+
         const deletes = document.querySelectorAll("svg.delete");
         deletes.forEach(svg => svg.addEventListener("click", deleteTask));
+
+        const projectEdits = document.querySelectorAll(".project-edit.pencil");
+        projectEdits.forEach(editor => editor.addEventListener("click", editProject));
     };
+
+    function toggleTaskDone(e) {
+        const title = e.target.parentElement.nextSibling.textContent;
+        appController.getCurrentProject().getTaskFromTitle(title).toggleDone();
+    }
 
     function selectProject(e){
         const current_project = appController.getProjectFromName(e.target.textContent);
         appController.changeCurrentProject(current_project);
+        deletePage();
+        renderPage();
+    }
+
+    function createProject() {
+        renderNewListPopup();
+        document.querySelector(".new-list.add").addEventListener("click", addNewList);
+        document.querySelector(".new-list.cancel").addEventListener("click", cancelNewList);
+    }
+
+    function editProject(e) {
+        const name = e.target.closest(".project").firstChild.textContent;
+        console.log(name);
+        renderNewListPopup();
+        document.querySelector(".new-list.add").addEventListener("click", editProject);
+        document.querySelector(".new-list.cancel").addEventListener("click", cancelNewList);
+    }
+
+    function editProject(e) {
+        e.preventDefault();
+        const formData = document.forms["new-list"];
+        const name = formData["name"].value;
+        if (!name) return showError("Please include a name");
+        if (appController.getProjectList().map(project => project.getName()).includes(name)) return showError("That list already exists");
+    
+        appController.addProject(Project(name, []));
+    
         deletePage();
         renderPage();
     }
@@ -113,36 +151,48 @@ const DOMController = (() => {
 
     function renderNewListPopup() {
         const popup = createElement("div", "", ["new-list", "popup"]);
-        popup.appendChild(createElement("input", "", ["new-list", "name"],[
+        const form = createElement("form", "", "", [
+            ["name", "new-list"],
+        ]);
+        form.appendChild(createElement("p", "", ["new-list", "error"]));
+        form.appendChild(createElement("input", "", ["new-list", "name"],[
+            ["name", "name"],
             ["type", "text"],
-            ["autofocus", true],
-            ["placeholder", "List name"],
+            ["placeholder", "List name *"],
             ["minlength", "1"],
+            ["autocomplete", "off"],
             //TODO: Add validation to avoid repeated names
         ]));
-        const cancel = createElement("button", "Cancel", ["new-list", "cancel"]);
-        cancel.addEventListener("click", cancelNewList);
-        popup.appendChild(cancel);
-    
-    
+
         const add = createElement("button", "Add", ["new-list", "add"]);
-        add.addEventListener("click", addNewList);
-        popup.appendChild(add);
+        form.appendChild(add);
+        
+        const cancel = createElement("button", "Cancel", ["new-list", "cancel"]);
+        form.appendChild(cancel);
+
+        popup.appendChild(form);
     
-        document.querySelector("nav").insertBefore(
+        document.querySelector("body").insertBefore(
             popup,
-            document.querySelector(".new-list.new")
+            document.querySelector("nav")
         );
+
+        document.querySelector(".new-list.name").focus();
     }
     
-    function cancelNewList() {
-        document.querySelector("nav").removeChild(
+    function cancelNewList(e) {
+        e.preventDefault();
+        document.querySelector("body").removeChild(
             document.querySelector(".new-list.popup")
         );
     }
     
-    function addNewList() {
-        const name = document.querySelector(".new-list.name").value;
+    function addNewList(e) {
+        e.preventDefault();
+        const formData = document.forms["new-list"];
+        const name = formData["name"].value;
+        if (!name) return showError("Please include a name");
+        if (appController.getProjectList().map(project => project.getName()).includes(name)) return showError("That list already exists");
     
         appController.addProject(Project(name, []));
     
@@ -150,18 +200,31 @@ const DOMController = (() => {
         renderPage();
     }
 
+    function showError(error) {
+        const errorEle = document.querySelector(".error");
+        errorEle.textContent = error;
+    }
+
     function renderNewTaskPopup() {
         const popup = createElement("div", "", ["new-task", "popup"]);
-        popup.appendChild(createElement("input", "", ["new-task", "name"],[
+        const form = createElement("form", "", "", [
+            ["name", "new-task"],
+        ]);
+        form.appendChild(createElement("p", "", ["new-task", "error"]));
+        form.appendChild(createElement("input", "", ["new-task", "name"],[
+            ["name", "name"],
             ["type", "text"],
-            ["autofocus", true],
-            ["placeholder", "Task name"],
+            ["placeholder", "Task name *"],
             ["minlength", "1"],
+            ["autocomplete", "off"],
             //TODO: Add validation to avoid repeated names
         ]));
-        popup.appendChild(createElement("input", "", ["new-task", "date"],[
+        const date = createElement("label", "Due Date: *", "", [["for", "date"]]);
+        date.appendChild(createElement("input", "", ["new-task", "date"],[
+            ["name", "date"],
             ["type", "date"],
         ]));
+        form.appendChild(date);
 
         const priorityInput = createElement("select", "", ["new-task", "priority"],[
             ["name", "priority"],
@@ -176,40 +239,55 @@ const DOMController = (() => {
         priorityInput.appendChild(createElement("option", "3", "", [
             ["value", "3"]
         ]));
-        popup.appendChild(priorityInput);
+        const priority = createElement("label", "Priority: *", "", [["for", "priority"]]);
+        priority.appendChild(priorityInput);
+        form.appendChild(priority);
 
-        popup.appendChild(createElement("textarea", "", ["new-task", "description"],[
+        form.appendChild(createElement("textarea", "", ["new-task", "description"],[
+            ["name", "description"],
             ["placeholder", "Description"],
+            ["autocomplete", "off"],
         ]));
+        
+        const add = createElement("button", "Add", ["new-task", "add"]);
+        add.addEventListener("click", addNewTask);
+        form.appendChild(add);
 
         const cancel = createElement("button", "Cancel", ["new-task", "cancel"]);
         cancel.addEventListener("click", cancelNewTask);
-        popup.appendChild(cancel);
+        form.appendChild(cancel);
 
-        const add = createElement("button", "Add", ["new-task", "add"]);
-        add.addEventListener("click", addNewTask);
-        popup.appendChild(add);
+        popup.appendChild(form);
     
-        document.querySelector("main").insertBefore(
+        document.querySelector("body").insertBefore(
             popup,
-            document.querySelector(".new-task.new")
+            document.querySelector("nav")
         );
+
+        document.querySelector(".new-task.name").focus();
     }
 
-    function cancelNewTask() {
-        document.querySelector("main").removeChild(
+    function cancelNewTask(e) {
+        e.preventDefault();
+        document.querySelector("body").removeChild(
             document.querySelector(".new-task.popup")
         );
     }
 
-    function addNewTask() {
-        const name = document.querySelector(".new-task.name").value;
-        const date = document.querySelector(".new-task.date").value;
-        const priority = document.querySelector(".new-task.priority").value;
-        const description = document.querySelector(".new-task.description").value;
+    function addNewTask(e) {
+        e.preventDefault();
+        const formData = document.forms["new-task"];
+        const name = formData["name"].value;
+        if (!name) return showError("Please include a task name");
+        if (appController.getCurrentProject().getTaskList().map(task => task.getTitle()).includes(name)) return showError("That task already exists");
+        const date = formData["date"].value;
+        if (!date) return showError("Please include a due date");
+        const priority = formData["priority"].value;
+        if (!priority) return showError("Please choose a priority");
+        const description = formData["description"].value;
 
         appController.getCurrentProject().addTask(Task(name, description, new Date(date), priority));
-    
+        
         deletePage();
         renderPage();
     }
@@ -228,9 +306,11 @@ const DOMController = (() => {
 
     function deletePage() {
         const body = document.querySelector("body");
-        body.removeChild(document.querySelector("nav"));
-        body.removeChild(document.querySelector("main"));
-        body.removeChild(document.querySelector("footer"));
+        let child = body.firstChild;
+        while (child) {
+            body.removeChild(child);
+            child = body.firstChild;
+        }
     }
 
     return {
@@ -242,6 +322,8 @@ appController.initialSetup();
 appController.test();
 
 DOMController.renderPage();
+
+//document.querySelector(".new-task.new").click();
 
 export default appController;
 

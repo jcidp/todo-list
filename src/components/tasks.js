@@ -12,9 +12,11 @@ function loadMain(tasks) {
         const task_line = createElement("div", "", ["task-line", "expand"]);
 
         const task_data = createElement("div", "", ["task-data", "expand"]);
-        task_data.appendChild(createElement("input", "", "",[
+        const check = createElement("input", "", "",[
             ["type", "checkbox"]
-        ]));
+        ]);
+        if (task.getDone()) check.checked = true;
+        task_data.appendChild(check);
         task_data.appendChild(
             createElement("p", task.getPriority(), ["priority", `p${task.getPriority()}`, "expand"])
         );
@@ -28,8 +30,8 @@ function loadMain(tasks) {
         );
 
         const svgs = createElement("div", "", ["task-svg"]);
-        svgs.appendChild(renderLinkIcon("pencil", "0 0 24 24", "M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"));
-        svgs.appendChild(renderLinkIcon("delete", "0 0 24 24", "M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"));
+        svgs.appendChild(renderLinkIcon("pencil", "0 0 24 24", "M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z", "task-edit"));
+        svgs.appendChild(renderLinkIcon("delete", "0 0 24 24", "M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z", "task-edit"));
         task_line.appendChild(svgs);
 
         task_container.appendChild(task_line);
