@@ -18,9 +18,5 @@ function loadNav(projects, current_project_name) {
     nav.appendChild(container);
     nav.appendChild(createElement("button", "+ New List", ["new-list", "new"]));
 
-    // const button_container = createElement("div", "", ["button-container"]);
-    // button_container.appendChild(createElement("button", "+ New List"));
-    // nav.appendChild(button_container);
-
     document.querySelector("body").appendChild(nav);
 }

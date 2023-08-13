@@ -4,6 +4,10 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    --very-light-color: #E9ECEF; /*#EFEFEF #CCE4FD*/
+    --light-color: #CED4DA; /*#EFEFEF #A4CEFC*/
+    --primary-color: #ADB5BD; /*lightgrey #77B6FB*/
+    --dark-color: #495057; /*darkslategrey #1557C0*/
 }
 
 :root {
@@ -13,7 +17,7 @@
 body {
     height: 100svh;
     display: grid;
-    grid-template: 1fr max-content / 1fr 3fr;
+    grid-template: 1fr max-content / minmax(9rem, 20%) 1fr;
 }
 
 nav, main {
@@ -31,12 +35,11 @@ svg {
 }
 
 nav {
-    padding: 1em;
     border-right: 1px solid gray;
 }
 
 .project {
-    padding-bottom: 1em;
+    padding: 1em;
     display: grid;
     grid-template-columns: 1fr min-content;
     align-items: center;
@@ -52,13 +55,40 @@ nav {
     cursor: pointer;
 }
 
-.current-project {
+.project:has(.current-project) {
     font-weight: bold;
+    background-color: var(--very-light-color);
+}
+
+button.new-list.new {
+    margin: 1rem;
 }
 
 button.new {
     margin-top: 1em;
     align-self: flex-start;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--light-color);
+}
+
+button:hover {
+    background-color: var(--primary-color);
+}
+
+button.cancel, button.new {
+    background-color: transparent;
+    border: 1px solid var(--light-color);
+}
+
+button.cancel:hover, button.new:hover {
+    background-color: var(--light-color);
+    border-color: transparent;
 }
 
 main {
@@ -74,7 +104,7 @@ main {
     border-top: 1px solid gray;
 }
 
-.task-line, .task-data, .task-svg {
+.task-data, .task-svg {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -82,6 +112,14 @@ main {
 
 .task-line {
     position: relative;
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    column-gap: 0.75rem;
+    align-items: center;
+}
+
+.expand {
+    cursor: default;
 }
 
 .task-line:has(input[type=checkbox]:checked)::before {
@@ -90,7 +128,7 @@ main {
     top: 50%;
     left: 1rem;
     border-bottom: 1px solid grey;
-    width: calc(100% - 1rem);
+    width: calc(100% - 4rem);
 }
 
 input[type=checkbox]:checked ~ .task-due-date,
@@ -115,20 +153,27 @@ p.priority {
 }
 
 .p1 {
-    background-color: red;
+    background-color: #D00000;
     color: white;
 }
 
 .p2 {
-    background-color: rgb(236, 236, 4);
+    background-color: #FFBA08;
 }
 
 .p3 {
-    background-color: lightblue;
+    background-color: #A4CEFC;
+}
+
+.task-due-date {
+    min-width: 3.5rem;
 }
 
 .task-name {
-    flex: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;  
 }
 
 .task-description {
@@ -175,12 +220,13 @@ label>select, label>input {
     padding: 0.5rem;
 }
 
-button.new-task {
-    margin: 0;
+label {
+    font-size: 0.875rem;
 }
 
 textarea {
     resize: none;
+    font-size: 0.75rem;
 }
 
 p.error {
@@ -198,7 +244,7 @@ a {
 
 footer {
     grid-column: 1 / -1;
-    background-color: darkslategray;
+    background-color: var(--dark-color);
     padding: 0.25em 0;
 }
 

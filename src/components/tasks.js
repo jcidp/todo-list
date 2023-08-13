@@ -43,13 +43,9 @@ function loadMain(tasks) {
     main.appendChild(container);
     if (!tasks.length) {
         main.removeChild(container);
-        main.appendChild(createElement("p", "Click the button below to add tasks to this list", ["empty-state-tasks"]));
+        main.appendChild(createElement("p", "Add a task using the button below", ["empty-state-tasks"]));
     }
     main.appendChild(createElement("button", "+ New Task", ["new-task", "new"]));
-
-    // const button_container = createElement("div", "", ["button-container"]);
-    // button_container.appendChild(createElement("button", "+ New Task"));
-    // main.appendChild(button_container);
 
     document.querySelector("body").appendChild(main);
 }

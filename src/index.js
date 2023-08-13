@@ -84,8 +84,6 @@ const appController = (() => {
         addProject,
         changeCurrentProject,
         deleteProject,
-        //addTaskToCurrentProject,
-        //deleteTaskFromCurrentProject,
         initialSetup,
         test,
     };
@@ -217,7 +215,6 @@ const DOMController = (() => {
             if (project_name === current_name) return;
             return project_name;
         });
-        console.log(project_name_list);
         if (project_name_list.includes(new_name)) return showError("That list already exists");
 
         return true;
@@ -275,7 +272,7 @@ const DOMController = (() => {
             ["type", "text"],
             ["placeholder", "Task name *"],
             ["minlength", "1"],
-            ["maxlength", "18"],
+            ["maxlength", "100"],
             ["autocomplete", "off"],
         ]));
         const date = createElement("label", "Due Date: *", "", [["for", "date"]]);
@@ -382,7 +379,6 @@ const DOMController = (() => {
         const line = e.target.closest(".task-line");
         const title = [...line.childNodes].filter(child =>
             child.classList.contains("task-name"))[0].textContent;
-        console.log(title);
 
         appController.getCurrentProject().deleteTask(title);
         if (storageAvailable()) populateStorage(appController.getProjectList(), appController.getCurrentProject());
