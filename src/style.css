@@ -299,11 +299,17 @@ footer>a {
         align-self: stretch;
     }
 
-    popup {
-        padding: 0;
+    .popup {
+        justify-content: center;
+        align-content: start;
     }
 
     form {
-        padding: 1em;
+        padding: 1.5em 1em;
+        margin-top: 3em;
+    }
+
+    p.error {
+        top: 0.25em;
     }
 }
