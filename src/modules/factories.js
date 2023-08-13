@@ -1,10 +1,10 @@
-const Task = (new_title, new_description, new_due_date, new_priority) => {
+const Task = (new_title, new_description, new_due_date, new_priority, new_done, new_created_at) => {
     let title = new_title;
     let description = new_description || "No description";
     let due_date = new_due_date;
     let priority = new_priority;
-    let done = false;
-    let created_at = new Date();
+    let done = new_done || false;
+    let created_at = new_created_at || new Date();
 
     const getTitle = () => title;
     const setTitle = (new_title) => title = new_title;

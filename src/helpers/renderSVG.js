@@ -18,4 +18,4 @@ function renderLinkIcon(name, viewBox, path_d, my_class) {
     if (my_class) iconSvg.classList.add(my_class);
 
     return iconSvg;
-    }
+}
