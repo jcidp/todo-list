@@ -55,26 +55,8 @@ const appController = (() => {
             setupFromStorage();
             return;
         }
-        const my_project = Project("My Tasks", []);
+        const my_project = Project("My Project", []);
         addProject(my_project);
-    };
-
-    const test = () => {
-        // current_project.addTask(Task("TodayTask", "CoolDesc", new Date(), 1));
-        // addProject(Project("Project Test", []));
-        // const task1 = Task("Task1", "Desc1", new Date(), 1);
-        // const task2 = Task("Task2", "Desc2", new Date(), 2);
-        // current_project.addTask(task1);
-        // current_project.addTask(task2);
-        // current_project.addTask(Task("Task3", "Desc3", new Date(), 1));
-        // current_project.getTaskList()[2].toggleDone();
-        // current_project.addTask(Task("Task4", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Suspendisse sed nisi lacus sed viverra tellus. Sagittis aliquam malesuada bibendum arcu vitae elementum curabitur vitae nunc.", new Date(), 3));
-        // current_project.addTask(Task("Task5", "Desc5", new Date(), 3));
-        // current_project.addTask(Task("Task6", "Desc6", new Date(), 3));
-        // current_project.setName("Cool Project Test");
-        //deleteProject("Today");
-        //addProject(Project("Project Test", []));
-        //current_project.addTask(Task("Task7", "Desc7", new Date(), 3));
     };
 
     return {
@@ -85,7 +67,6 @@ const appController = (() => {
         changeCurrentProject,
         deleteProject,
         initialSetup,
-        test,
     };
 })();
 
@@ -125,7 +106,10 @@ const DOMController = (() => {
 
     function selectProject(e){
         const current_project = appController.getProjectFromName(e.target.textContent);
+        console.log(e.target.textContent === appController.getCurrentProject().getName());
+        if (e.target.textContent === appController.getCurrentProject().getName()) return toggleMobileMenu();
         appController.changeCurrentProject(current_project);
+
         deletePage();
         renderPage();
     }
@@ -396,43 +380,18 @@ const DOMController = (() => {
         }
     }
 
+    function toggleMobileMenu() {
+        const projects = document.querySelectorAll(".project");
+        projects.forEach(project => project.classList.toggle("mobile-hide"));
+        const btn = document.querySelector("button.new-list.new");
+        btn.classList.toggle("mobile-hide");
+    }
+
     return {
         renderPage
     };
 })();
 
 appController.initialSetup();
-appController.test();
 
 DOMController.renderPage();
-
-//document.querySelector(".new-task.new").click();
-
-export default appController;
-
-/*
-    const test = () => {
-        console.log(current_project.getName());
-        addProject(Project("Project Test", []));
-        const task1 = Task("Task1", "Desc1", new Date(), 1);
-        const task2 = Task("Task2", "Desc2", new Date(), 2);
-        console.log(current_project.getName());
-        console.log(current_project.getTaskList().map(task => task.getTitle()));
-        current_project.addTask(task1);
-        current_project.addTask(task2);
-        current_project.addTask(Task("Task3", "Desc3", new Date(), 1));
-        console.log(current_project.getTaskList()[2].getDone());
-        current_project.getTaskList()[2].toggleDone();
-        console.log(current_project.getTaskList()[2].getDone());
-        console.log(current_project.getTaskList().map(task => task.getTitle()));
-        current_project.deleteTask(task2);
-        current_project.addTask(Task("Task4", "Desc4", new Date(), 3));
-        console.log(current_project.getTaskList().map(task => task.getTitle()));
-        current_project.setName("Cool Project Test");
-        console.log(current_project.getName());
-        console.log(project_list.map(task => task.getName()));
-        //deleteProject(current_project);
-        //console.log(project_list.map(task => task.getName()));
-        console.log(current_project.getName());
-    };
-*/

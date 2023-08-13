@@ -46,9 +46,9 @@ nav {
     column-gap: 0.5rem;
 }
 
-.project:not(:first-of-type) {
+.project {
     padding-top: 1em;
-    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
 }
 
 .project-title:hover, svg:hover, button:hover, input[type=checkbox]:hover {
@@ -186,7 +186,7 @@ p.priority {
 
 .popup {
     position: fixed;
-    z-index: 1;
+    z-index: 2;
     background-color: rgba(125, 125, 125, 0.6);
     width: 100%;
     height: 100%;
@@ -245,7 +245,7 @@ a {
 footer {
     grid-column: 1 / -1;
     background-color: var(--dark-color);
-    padding: 0.25em 0;
+    padding: 0.375em 0;
 }
 
 footer>a {
@@ -258,4 +258,52 @@ footer>a {
 #author + svg {
     max-width: 2rem;
     fill: white;
+}
+
+@media (max-width: 580px) {
+    body {
+        grid-template: 1fr max-content / 1fr
+    }
+
+    .mobile-hide:not(:has(.current-project)) {
+        display: none;
+    }
+
+    .current-project::before {
+        content: "__ ";
+        color: var(--very-light-color);
+        background: url(./images/hamburger.svg) no-repeat center;
+        margin-right: 0.25em;
+    }
+
+    nav:not(:has(.mobile-hide)) {
+        display: flex;
+        height: calc(100% - 1.75rem - 1px);
+    }
+
+    nav {
+        display: grid;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+        background-color: white;
+        border-right: none;
+        border-bottom: 1px solid grey;
+    }
+
+    main {
+        margin-top: 3em;
+    }
+
+    button.new {
+        align-self: stretch;
+    }
+
+    popup {
+        padding: 0;
+    }
+
+    form {
+        padding: 1em;
+    }
 }

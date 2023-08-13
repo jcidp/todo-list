@@ -7,7 +7,7 @@ export default loadMain;
 function loadMain(tasks) {
     const main = document.createElement("main");
     const container = createElement("div", "", ["task-container"]);
-    tasks.forEach(task => {
+    tasks.sort((a, b) => a.getDone() - b.getDone()).forEach(task => {
         const task_container = createElement("div", "", ["task", "expand"]);
         const task_line = createElement("div", "", ["task-line", "expand"]);
 
