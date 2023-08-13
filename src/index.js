@@ -275,6 +275,7 @@ const DOMController = (() => {
             ["type", "text"],
             ["placeholder", "Task name *"],
             ["minlength", "1"],
+            ["maxlength", "18"],
             ["autocomplete", "off"],
         ]));
         const date = createElement("label", "Due Date: *", "", [["for", "date"]]);

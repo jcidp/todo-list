@@ -41,6 +41,10 @@ function loadMain(tasks) {
         container.appendChild(task_container);
     });
     main.appendChild(container);
+    if (!tasks.length) {
+        main.removeChild(container);
+        main.appendChild(createElement("p", "Click the button below to add tasks to this list", ["empty-state-tasks"]));
+    }
     main.appendChild(createElement("button", "+ New Task", ["new-task", "new"]));
 
     // const button_container = createElement("div", "", ["button-container"]);
