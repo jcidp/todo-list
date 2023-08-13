@@ -55,7 +55,7 @@ const appController = (() => {
             setupFromStorage();
             return;
         }
-        const my_project = Project("Today", []);
+        const my_project = Project("My Tasks", []);
         addProject(my_project);
     };
 
@@ -253,7 +253,7 @@ const DOMController = (() => {
         renderNewTaskPopup();
         const task = appController.getCurrentProject().getTaskFromTitle(current_name);
         document.querySelector(".new-task.name").value = current_name;
-        document.querySelector(".new-task.date").value = format(task.getDueDate(), "y-MM-d");
+        document.querySelector(".new-task.date").value = format(task.getDueDate(), "y-MM-dd");
         document.querySelector(".new-task.priority").value = task.getPriority();
         document.querySelector(".new-task.description").value =
             task.getDescription() === "No description" ? "" : task.getDescription();

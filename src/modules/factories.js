@@ -1,7 +1,9 @@
+import {format, add} from "date-fns";
+
 const Task = (new_title, new_description, new_due_date, new_priority, new_done, new_created_at) => {
     let title = new_title;
     let description = new_description || "No description";
-    let due_date = new_due_date;
+    let due_date = add(new_due_date, {hours: parseInt(format(new_due_date, "x")) * -1});
     let priority = new_priority;
     let done = new_done || false;
     let created_at = new_created_at || new Date();
@@ -13,7 +15,7 @@ const Task = (new_title, new_description, new_due_date, new_priority, new_done, 
     const setDescription = (new_description) => description = new_description || "No description";
 
     const getDueDate = () => due_date;
-    const setDueDate = (new_due_date) => due_date = new_due_date;
+    const setDueDate = (new_due_date) => due_date = add(new_due_date, {hours: parseInt(format(new_due_date, "x")) * -1});
 
     const getPriority = () => priority;
     const setPriority = (new_priority) => priority = new_priority;
